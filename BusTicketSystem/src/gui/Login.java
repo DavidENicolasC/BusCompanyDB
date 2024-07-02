@@ -8,6 +8,7 @@ package gui;
 import java.awt.Toolkit;
 import javax.swing.JOptionPane;
 import methods.Empleado;
+import methods.UsuariosApp;
 
 /**
  *
@@ -15,16 +16,19 @@ import methods.Empleado;
  */
 public class Login extends javax.swing.JFrame {
     
-    int intent = 0;
-    String idEmpleado;
-    String nombreEmpleado;
+    int intent = 0;         //Cuenta el numero de intentos de inicio de sesion
+    int idEmpleado;      //Guarda el ID del empleado
+    String nombreEmpleado;  //Guarda el nombre del empleado
+    UsuariosApp usuario_app; //Objeto que almacena los datos del usuario de la app
     Empleado empleado;
     
     /**
      * Creates new form Login
      */
     public Login() {
-        initComponents();
+        initComponents();           //Inicializa los componentes de la GUI
+        //Instancia un objeto Empleado para guardar los datos de la consulta
+        usuario_app = new UsuariosApp();
         empleado = new Empleado();
     }
     
@@ -54,11 +58,12 @@ public class Login extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Arial Black", 0, 24)); // NOI18N
         jLabel1.setText("INGRESAR AL SISTEMA");
 
-        jPanel2.setBackground(new java.awt.Color(255, 0, 51));
+        jPanel2.setBackground(new java.awt.Color(204, 0, 51));
         jPanel2.setForeground(new java.awt.Color(255, 255, 255));
 
         jLabel2.setFont(new java.awt.Font("Broadway", 0, 72)); // NOI18N
@@ -214,14 +219,18 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_CampoIDEmpActionPerformed
 
     private void BotonIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonIngresarActionPerformed
-        // Busca el usuario y contrasenia
-        // Crea un bean para guardar los datos
-        Object employee[] = empleado.getUsuario(jTextField2.getText().trim(), jPasswordField1.getPassword());
-        // si regresa un id mayor a 0, es válido
-        if (Integer.parseInt(employee [0].toString()) > 0){
+        // Crea un bean para guardar los datos ingresados en la interfaz
+        Object usuario[] = usuario_app.selectUsuario_AppPorIDyPass(Integer.parseInt(jTextField2.getText().trim()),
+                jPasswordField1.getPassword());
+        //Object employee[] = usuarioapp.selectUsuario_AppPorIDyPass(Integer.parseInt(jTextField2.getText().trim()),
+                //jPasswordField1.getPassword());
+        // Si encontró al menos un registro con el ID y el Password, entra
+        //al sistema
+        if (usuario != null && Integer.parseInt(usuario[0].toString()) > 0){
             // Guarda los datos encontrados
-            idEmpleado = employee [0].toString();
-            nombreEmpleado = employee[1].toString();
+            idEmpleado = Integer.parseInt(usuario[0].toString());
+            nombreEmpleado = empleado.selectEmpleado(idEmpleado)[1].toString();
+            nombreEmpleado = usuario[1].toString();
             // Cierra la ventana y abre la ventana principal
             MenuPrincipal p = new MenuPrincipal(idEmpleado, nombreEmpleado);
             p.setVisible(true);
